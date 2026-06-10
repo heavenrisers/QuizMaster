@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📊 Your Analytics</h2>
+</div>
+
+{% if topic_performance %}
+
+    {% if weak_topics %}
+    <div class="weak-topics-card">
+        <h3>⚠️ Weak Topics (below 50%)</h3>
+        <div class="weak-tags">
+            {% for topic in weak_topics %}
+                <span class="weak-tag">{{ topic }}</span>
+            {% endfor %}
+        </div>
+        <p>Focus more time on these topics to improve your overall performance.</p>
+    </div>
+    {% else %}
+    <div class="strong-card">
+        <h3>🎉 Great job! No weak topics detected.</h3>
+        <p>You're scoring above 50% in all topics. Keep it up!</p>
+    </div>
+    {% endif %}
+
+    <div class="form-card">
+        <h3>Topic-wise Performance</h3>
+        <canvas id="analyticsChart" style="max-height:300px;"></canvas>
+    </div>
+
+    <div class="topic-table-wrap">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Attempts</th>
+                    <th>Avg Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in topic_performance %}
+                <tr>
+                    <td>{{ t.topic }}</td>
+                    <td>{{ t.attempts }}</td>
+                    <td>
+                        <span class="percent-badge
+                            {% if t.percent >= 80 %}badge-green
+                            {% elif t.percent >= 50 %}badge-yellow
+                            {% else %}badge-red{% endif %}">
+                            {{ t.percent }}%
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% else %}
+<div class="empty-state">
+    <p>No data yet. Attempt some quizzes to see your analytics!</p>
+    <a href="{{ url_for('quiz.dashboard') }}" class="btn-primary">Go to Dashboard</a>
+</div>
+{% endif %}
+{% endblock %}
+      
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const topicLabels = {{ topic_performance | map(attribute='topic') | list | tojson }};
+    const topicScores = {{ topic_performance | map(attribute='percent') | list | tojson }};
+
+    const backgroundColors = topicScores.map(score => {
+        if (score >= 80) return 'rgba(22,163,74,0.7)';
+        if (score >= 50) return 'rgba(234,179,8,0.7)';
+        return 'rgba(220,38,38,0.7)';
+    });
+
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: topicLabels,
+            datasets: [{
+                label: 'Score %',
+                data: topicScores,
+                backgroundColor: backgroundColors,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { callback: val => val + '%' }
+                }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+{% endblock %}

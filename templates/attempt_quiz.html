@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="page-header">
+        <h2>{{ quiz.title }}</h2>
+        <div class="timer-box" id="timer">⏱️ 30:00</div>
+    </div>
+
+    <form method="POST" action="{{ url_for('quiz.submit_quiz', quiz_id=quiz.id) }}"
+          id="quizForm">
+        {% for q in questions %}
+        <div class="form-card question-card">
+            <p class="question-text">
+                <b>Q{{ loop.index }}.</b> {{ q.question_text }}
+            </p>
+            <div class="options-list">
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="A" required>
+                    <span>A. {{ q.option_a }}</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="B">
+                    <span>B. {{ q.option_b }}</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="C">
+                    <span>C. {{ q.option_c }}</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="D">
+                    <span>D. {{ q.option_d }}</span>
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-full">Submit Quiz</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Timer — 30 minutes
+    let timeLeft = 30 * 60;
+    const timerEl = document.getElementById('timer');
+    const quizForm = document.getElementById('quizForm');
+
+    const countdown = setInterval(() => {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerEl.textContent = `⏱️ ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+        if (timeLeft <= 60) {
+            timerEl.style.color = '#dc2626';
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            quizForm.submit();
+        }
+        timeLeft--;
+    }, 1000);
+</script>
+{% endblock %}

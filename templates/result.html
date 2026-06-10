@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Result - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="result-page">
+    <div class="result-card">
+        <div class="result-emoji">
+            {% if percent >= 80 %}🎉
+            {% elif percent >= 50 %}👍
+            {% else %}📖
+            {% endif %}
+        </div>
+
+        <h2>Quiz Complete!</h2>
+        <h3>{{ quiz.title }}</h3>
+
+        <div class="score-display">
+            <span class="score-number">{{ score }}/{{ total }}</span>
+            <span class="score-percent">{{ percent }}%</span>
+        </div>
+
+        <p class="score-message">
+            {% if percent >= 80 %}
+                Excellent! You have a strong understanding of this topic.
+            {% elif percent >= 50 %}
+                Good effort! Review the questions you missed.
+            {% else %}
+                Keep practicing! This topic needs more attention.
+            {% endif %}
+        </p>
+
+        <div class="result-actions">
+            <a href="{{ url_for('quiz.dashboard') }}" class="btn-primary">Back to Dashboard</a>
+            <a href="{{ url_for('quiz.analytics') }}" class="btn-secondary">View Analytics</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

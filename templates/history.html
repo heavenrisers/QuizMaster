@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}History - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>📋 Quiz History</h2>
+</div>
+
+{% if scores %}
+<div class="history-table-wrap">
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Quiz</th>
+                <th>Topic</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in scores %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ s.quiz.title }}</td>
+                <td><span class="topic-tag">{{ s.quiz.topic }}</span></td>
+                <td>{{ s.score }}/{{ s.total }}</td>
+                <td>
+                    {% set percent = ((s.score / s.total) * 100)|round|int %}
+                    <span class="percent-badge
+                        {% if percent >= 80 %}badge-green
+                        {% elif percent >= 50 %}badge-yellow
+                        {% else %}badge-red{% endif %}">
+                        {{ percent }}%
+                    </span>
+                </td>
+                <td>{{ s.attempted_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No attempts yet. Start attempting quizzes!</p>
+    <a href="{{ url_for('quiz.dashboard') }}" class="btn-primary">Go to Dashboard</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Welcome, {{ current_user.username }}! 👋</h2>
+    <a href="{{ url_for('quiz.create_quiz') }}" class="btn-primary">+ Create Quiz</a>
+</div>
+
+{% if quizzes %}
+    <div class="quiz-grid">
+        {% for q in quizzes %}
+            <div class="quiz-card">
+                <div class="quiz-card-header">
+                    <span class="quiz-topic">{{ q.topic }}</span>
+                    {% if q.id in attempted_quiz_ids %}
+                        <span class="badge-attempted">✅ Attempted</span>
+                    {% else %}
+                        <span class="badge-new">🆕 New</span>
+                    {% endif %}
+                </div>
+
+                <h3>{{ q.title }}</h3>
+                <p class="quiz-meta">
+                    👤 {{ q.creator.username }} &nbsp;|&nbsp;
+                    ❓ {{ q.questions|length }} questions
+                </p>
+
+                <div class="quiz-card-footer">
+                    {% if q.created_by == current_user.id %}
+                        <a href="{{ url_for('quiz.add_questions', quiz_id=q.id) }}"
+                           class="btn-secondary">Edit</a>
+                    {% endif %}
+                    <a href="{{ url_for('quiz.attempt_quiz', quiz_id=q.id) }}"
+                       class="btn-primary">
+                        {% if q.id in attempted_quiz_ids %}Retry{% else %}Start{% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No quizzes yet. Be the first to create one!</p>
+        <a href="{{ url_for('quiz.create_quiz') }}" class="btn-primary">Create Quiz</a>
+    </div>
+{% endif %}
+{% endblock %}

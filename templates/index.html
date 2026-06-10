@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}QuizMaster - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>🧠 QuizMaster</h1>
+        <p>Create quizzes, test your knowledge, track your performance and identify weak topics.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.signup') }}" class="btn-primary">Get Started</a>
+            <a href="{{ url_for('auth.login') }}" class="btn-secondary">Login</a>
+        </div>
+    </div>
+
+    <div class="hero-features">
+        <div class="feature-card">
+            <span>📝</span>
+            <h3>Create Quizzes</h3>
+            <p>Build custom quizzes on any topic with multiple choice questions</p>
+        </div>
+        <div class="feature-card">
+            <span>⏱️</span>
+            <h3>Timed Attempts</h3>
+            <p>Challenge yourself with real-time countdown timer</p>
+        </div>
+        <div class="feature-card">
+            <span>📊</span>
+            <h3>Analytics</h3>
+            <p>Track performance and detect weak topics automatically</p>
+        </div>
+        <div class="feature-card">
+            <span>📈</span>
+            <h3>Quiz History</h3>
+            <p>Review all your past attempts and scores</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
